@@ -19,9 +19,10 @@ def funzip(file):
     ploc = flen - 4 #location of period in '.zip'
 
     os.mkdir(CWD + '/' + file[:ploc])
+    newdir = CWD + '/' + file[:ploc]
     with zipfile.ZipFile(file, 'r') as zip:
         zip.printdir()
-        zip.extractall()
+        zip.extractall(path=newdir)
 
 def main():
     """
