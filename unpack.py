@@ -3,7 +3,8 @@ Author: Matthew Rho
 file: unpack.py
 desc: A script to unpack student's files from mycourses
 Given a mycourses zip file, unpack it, with all the student's files
-All extra files given are ignored
+usage: python %s file [output-file]
+By default, the output-file will be the name of the zip
 """
 
 import zipfile, sys, os
