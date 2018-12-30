@@ -9,7 +9,7 @@ All extra files given are ignored
 import zipfile, sys, os
 CWD = os.getcwd()
 
-def funzip(file, newname=None):
+def funzip(file, path=CWD,  newname=None):
     """
     Unzip a file and put it into a folder of the same name
     :param file: str, file to be unzipped
@@ -20,13 +20,13 @@ def funzip(file, newname=None):
 
     #we want to rename the file to something other than the folder name
     if newname is not None:
-        os.mkdir(CWD + '/' + newname)
-        newdir = CWD + '/' + newname
+        os.mkdir(path + '/' + newname)
+        newdir = path + '/' + newname
     else:
-        os.mkdir(CWD + '/' + file[:ploc])
-        newdir = CWD + '/' + file[:ploc]
+        os.mkdir(path + '/' + file[:ploc])
+        newdir = path + '/' + file[:ploc]
     with zipfile.ZipFile(file, 'r') as zip:
-        zip.printdir()
+        #zip.printdir()
         zip.extractall(path=newdir)
     return newdir
 
@@ -45,7 +45,7 @@ def main():
 
     #mycourses file we are going to unzip
     filename = sys.argv[1]
-    print(filename)
+    #print(filename)
     if len(filename) < 5:
         print("The length of the file was not long enough", file=sys.stderr)
         print('In the case that the file has spaces in it,\
@@ -59,14 +59,28 @@ def main():
     #Unzip the first file
     try:
         newdir = funzip(filename)
-
+        #print(newdir)
+        #go to new directory
+        os.chdir(newdir)
+        dirlst = os.listdir(newdir)
         #unzip everything else
-        for file in newdir:
+        for file in dirlst:
+            print(file)
             if file[-4:] == ".zip":
-                #TODO strip the numbers off the student's zip files
-                funzip(file)
+                temp = file.split()
+                if len(temp) != 6:
+                    print("file %s was of the incorrect format" % (file), file=sys.stderr)
+                    continue
+                sname = temp[2] + temp[3] #student name
+                funzip(file, path=newdir, newname=sname)
+                os.rename(file, newdir + '/' + sname)
+        #go back to old directory
+        os.chdir(CWD)
+    except OSError:
+        print("File already exists", file=sys.stderr)
+        exit(-1)
     except:
-        print("An error occured", file=sys.stderr)
+        print("A general error occurred", file=sys.stderr)
         exit(-1)
 
 """
