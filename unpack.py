@@ -13,6 +13,8 @@ def funzip(file, path=CWD,  newname=None):
     """
     Unzip a file and put it into a folder of the same name
     :param file: str, file to be unzipped
+    :param path: str, the directory that we are unzipping to
+    :param newname: str, what to name the new folder. By default, it will be the same name as the zip file
     :return: str, the new directory
     """
     flen = len(file) #file length
@@ -75,7 +77,7 @@ def main():
     Error checking, for you maniacs out there
     """
     if argc < 2: #not enough args
-        print("usage: python %s file" % (sys.argv[0]), file=sys.stderr)
+        print("usage: python %s file [output-file]" % (sys.argv[0]), file=sys.stderr)
         exit(-1)
 
     #mycourses file we are going to unzip
@@ -93,7 +95,10 @@ def main():
 
     #Unzip the first file
     try:
-        newdir = funzip(filename)
+        if argc > 2:
+            newdir = funzip(filename, newname=sys.argv[2])
+        else:
+            newdir = funzip(filename)
         #print(newdir)
         #go to new directory
         os.chdir(newdir)
