@@ -30,6 +30,41 @@ def funzip(file, path=CWD,  newname=None):
         zip.extractall(path=newdir)
     return newdir
 
+def getname(mcstring):
+    """
+    Gets the name from the string of a mycourses format
+    example: 110852-1506869 - Lastname, Firstname - lab01.zip
+    The first and lastnames could have multiple spaces in them
+    :param mcstring: The string with the student's name
+    :return: A new string with just the last name and first name
+    Note: the order will be last name, first name. The last name will have a comma after it
+    """
+    temp = mcstring.split()
+    last = ""
+    first = ""
+    step = 0 #will determine what part of the name to assign
+    for str in temp:
+        if str == '-':
+            step += 1
+            continue
+
+        if step == 1:
+            last += str + ' '
+            #The last name will have a comma at the end to sep from the firstname
+            if str[-1] == ',':
+                step += 1
+                continue
+        if step == 2:
+            first += str + ' '
+        #change what step we're at
+    if step != 3:
+        print("The file %s was of the incorrect format" % (mcstring), file=sys.stderr)
+        return None
+
+    last = last.strip()
+    first = first.strip()
+    return last + first
+
 def main():
     """
     Where all the good stuff happens
@@ -67,11 +102,9 @@ def main():
         for file in dirlst:
             print(file)
             if file[-4:] == ".zip":
-                temp = file.split()
-                if len(temp) != 6:
-                    print("file %s was of the incorrect format" % (file), file=sys.stderr)
+                sname = getname(file)
+                if sname is None:
                     continue
-                sname = temp[2] + temp[3] #student name
                 funzip(file, path=newdir, newname=sname)
                 os.rename(file, newdir + '/' + sname + '/' + filename)
         #go back to old directory
