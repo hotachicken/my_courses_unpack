@@ -73,7 +73,7 @@ def main():
                     continue
                 sname = temp[2] + temp[3] #student name
                 funzip(file, path=newdir, newname=sname)
-                os.rename(file, newdir + '/' + sname)
+                os.rename(file, newdir + '/' + sname + '/' + filename)
         #go back to old directory
         os.chdir(CWD)
     except OSError:
